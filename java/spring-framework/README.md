@@ -16,7 +16,7 @@ Spring Framework 기반 웹 개발을 공부하면서 작성한 프로젝트입�
 
 부스트코스 Full stack web developer 과정의 방명록 예제([링크](https://www.edwith.org/boostcourse-web/lecture/16772/))를 구현한 프로젝트입니다.
 
-## 구현 설명
+### 구현 설명
 
 * http://localhost:8080/guestbook 으로 접속 시 index.jsp로 응답
 * index.jsp는 페이지를 /list 로 리다이렉트
