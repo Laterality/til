@@ -1,0 +1,24 @@
+#slide-box {
+	width: 80%;
+	margin-left: auto;
+	margin-right: auto;
+	overflow: hidden;
+}
+
+#img-container {
+	width: 100%;
+	display: flex;
+	position: relative;
+	flex-direction: row;
+	overflow-x: visible;
+	border: 1px solid grey;
+}
+
+#img-container * {
+	width: 100%;
+	min-width: 100%;
+	position: relative;
+	border: 1px solid grey;
+	background-size: cover;
+	overflow: hidden;
+}
