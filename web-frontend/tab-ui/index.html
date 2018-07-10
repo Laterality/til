@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<link rel="stylesheet" href="css/style.css">
+	<title>Document</title>
+</head>
+<body>
+	<div id="tab-header">
+		<h2 id="tab-item-apple" class="tab-item">Apple</h2>
+		<h2 id="tab-item-banana" class="tab-item">Banana</h2>
+		<h2 id="tab-item-melon" class="tab-item">Melon</h2>
+	</div>
+	<section id="tab-content">Choose as your favor</section>
+
+
+	<script type="text/javascript">
+		// json 데이터를 가정
+		var data = {
+			fruits: [
+				{
+					name: "apple",
+					likes: 22,
+					img_url: "https://www.vaporfi.com.au/media/catalog/product/cache/34/thumbnail/600x600/9df78eab33525d08d6e5fb8d27136e95/v/z/vz_eliquid_juicy_red_apple.jpg",
+					description: "This is an apple, delicious apple"
+				},
+				{
+					name: "banana",
+					likes: 6,
+					img_url: "http://www.livescience.com/images/i/000/065/149/original/bananas.jpg",
+					description: "Banana, the yellow banana"
+				},
+				{
+					name: "melon",
+					likes: 13,
+					img_url: "https://i2.wp.com/aapnapariwar.com/wp-content/uploads/2017/10/melon_194841866.png?fit=400%2C266",
+					description: "Fresh melon"
+				}
+			],
+			count: 3
+		}
+
+		var makeTemplate = (data) => {
+			var template = `
+			<h3>{name}</h3>
+			<p><small><strong>{likes}</strong> people like this fruit</small></p>
+			<img src="{img_url}"/>
+			<p>{desc}</p>`;
+
+			return template.replace("{name}", data["name"])
+			.replace("{likes}", data["likes"])
+			.replace("{img_url}", data["img_url"])
+			.replace("{desc}", data["description"]);
+		}
+		
+		var elmContent = document.getElementById("tab-content");
+
+		document.getElementById("tab-item-apple")
+		.addEventListener("click",() => {
+			elmContent.innerHTML = makeTemplate(data.fruits[0]);
+		});
+
+		document.getElementById("tab-item-banana")
+		.addEventListener("click", () => {
+			elmContent.innerHTML = makeTemplate(data.fruits[1]);
+		});
+
+		document.getElementById("tab-item-melon")
+		.addEventListener("click", () => {
+			elmContent.innerHTML = makeTemplate(data.fruits[2]);
+		});
+
+
+	</script>
+</body>
+</html>
