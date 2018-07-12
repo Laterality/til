@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+
+    <bean id="hello" class="kr.latera.di_with_xml.Hello" >
+        <property name="name" value="Spring" />
+        <property name="printer" ref="consolePrinter" />
+    </bean>
+
+    <bean id="stringPrinter" class="kr.latera.di_with_xml.StringPrinter" />
+    <bean id="consolePrinter" class="kr.latera.di_with_xml.ConsolePrinter" />
+
+</beans>
