@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+	
+	<aop:config>
+	  <aop:aspect id="traceAspect" ref="performanceTraceAdvice">
+	    <aop:around pointcut="execution(public * kr.latera.aop.traceable..*(..))" method="trace"></aop:around>
+	  </aop:aspect>
+	</aop:config>
+	
+	<bean id="performanceTraceAdvice" class="kr.latera.aop.PerformanceTraceAdvice" />
+	
+	<bean id="myClass" class="kr.latera.aop.traceable.MyClass" />
+
+</beans>
