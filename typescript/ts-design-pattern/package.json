@@ -1,0 +1,22 @@
+{
+  "name": "ts-design-pattern",
+  "version": "1.0.0",
+  "description": "Studying design pattern with typescript",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.6",
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0"
+  },
+  "scripts": {
+    "test": "mocha",
+    "cover": "istanbul cover node_modules/mocha/bin/_mocha"
+  },
+  "author": "Laterality",
+  "license": "MIT"
+}
