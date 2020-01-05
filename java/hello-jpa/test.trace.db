@@ -1,3 +1,0 @@
-2019-03-09 16:35:30 jdbc[3]: exception
-org.h2.jdbc.JdbcSQLException: Table "MEMBER" not found; SQL statement:
-/* insert kr.latera.hello_jpa.entity.Member */ insert into Member (name, id) values (?, ?) [42102-197]

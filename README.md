@@ -1,4 +1,3 @@
 # TIL(Today I Learned)
 
-공부한 내용을 정리하여 게시하는 Repository입니다. 주제별로 디렉터리에 복수의 프로젝트를 포함하고 있으며, 해당 프로젝트에 대한 설명이나 빌드 방법 등은 해당 주제/디렉터리의 README를 참조하시기 바랍니다.
-
+Place where very small knowledges stay.
