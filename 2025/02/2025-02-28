@@ -1,0 +1,40 @@
+# 2025. 02. 28.
+
+## Reactor 3 Reference Guide
+
+### Reactor Core 기능
+
+#### 오류 처리
+
+##### 1. 오류 처리 연산자
+
+###### 1.8. `onError`의 종결(terminal) 특성
+
+이 모든 연산자들이 오류가 발생하면 원본 시퀀스를 종료시킨다는 점을 알아보기 위해 `Flux.interval`을 더 시각적인 예시로 사용할 수 있다. `interval` 연산자는 매 x 시간 단위마다 증가하는 `Long` 값으로 틱(tick)을 보낸다. 다음은 `interval`을 사용하는 예시다:
+
+```java
+Flux<String> flux =
+Flux.interval(Duration.ofMillis(250))
+    .map(input -> {
+        if (input < 3) return "tick " + input;
+        throw new RuntimeException("boom");
+    })
+    .onErrorReturn("Uh oh");
+
+flux.subscribe(System.out::println);
+Thread.sleep(2100); // 1. `interval`은 기본적으로 **타이머** `Scheduler`를 실행한다. 이 예시를 메인 클래스에서 실행하고자 할 때는 `sleep` 호출을 추가해 애플리케이션이 값 생성 없이 즉시 종료되지 않도록 해야 한다.
+```
+
+앞의 예시는 매 250ms마다 한 줄씩 출력한다:
+
+```
+tick 0
+tick 1
+tick 2
+Uh oh
+```
+
+실행 시간이 1초 더 있어어도 `interval`에서는 더이상 틱을 보내지 않는다. 이 시퀀스는 오류로 종료된 것이다.
+
+
+
