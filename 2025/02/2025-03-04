@@ -1,0 +1,12 @@
+# 2025. 03. 04.
+
+## Reactor 3 Reference Guide
+
+### Reactor Core 기능
+
+##### 싱크(sink)
+
+Reactor에서 싱크는 (`unicast()`를 제외하고)여러 `Subscriber`를 다룰 수 있는 `Publisher`와 유사한 구조를 만들어 단독으로 신호를 안전하게 트리거하는 것이 허용되는 클래스다.
+
+`3.5.0` 이전에는 `Processor` 구현체 집합이 있었다.
+
