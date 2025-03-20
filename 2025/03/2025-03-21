@@ -1,0 +1,78 @@
+# 2025. 03. 21.
+
+## Reactor 3 Reference Guide
+
+### 테스팅
+
+#### 6. `PublisherProbe`로 실행 경로 검사
+
+복잡한 연산자 체인을 구축할 때는 별개의 서브 시퀀스에 의해 구체화되는 가능한 몇 가지 실행 경로가 있는 경우가 생길 수 있다.
+
+대부분의 경우 이러한 서브 시퀀스는 최종 결과로 실행됐음을 확인할 수 있는 충분히 구체적인 `onNext` 신호를 만들어낸다.
+
+예를 들어, 다음 메서드를 보자, 이 메서드는 소스로부터 연산자 체인을 만들고 `switchIfEmpty`를 사용해 소스가 비어있으면 특정 대안으로 폴백한다:
+
+```java
+public Flux<String> processOrFallback(Mono<String> source, Publisher<String> fallback) {
+    return source
+            .flatMapMany(phrase -> Flux.fromArray(phrase.split("\\s+")))
+            .switchIfEmpty(fallback);
+}
+```
+
+다음과 같이 `switchIfEmpty`가 사용된 논리적 분기를 테스트할 수 있다:
+
+```java
+@Test
+public void testSplitPathIsUsed() {
+    StepVerifier.create(processOrFallback(Mono.just("just a  phrase with    tabs!"),
+            Mono.just("EMPTY_PHRASE")))
+                .expectNext("just", "a", "phrase", "with", "tabs!")
+                .verifyComplete();
+}
+
+@Test
+public void testEmptyPathIsUsed() {
+    StepVerifier.create(processOrFallback(Mono.empty(), Mono.just("EMPTY_PHRASE")))
+                .expectNext("EMPTY_PHRASE")
+                .verifyComplete();
+}
+```
+
+하지만 그 대신 `Mono<Void>`를 만들어내는 메서드를 생각해보자. 소스가 완료될 때까지 기다렸다가 추가 작업을 수행하고 끝난다. 만약 소스가 비어있으면 `Runnable` 같은 폴백이 수행돼야 한다. 다음 예시가 이러한 경우를 보여준다:
+
+```java
+private Mono<String> executeCommand(String command) {
+    return Mono.just(command + " DONE");
+}
+
+public Mono<Void> processOrFallback(Mono<String> commandSource, Mono<Void> doWhenEmpty) {
+    return commandSource
+            .flatMap(command -> executeCommand(command).then()) // 1. `then()`은 명령 결과를 잊는다. 오직 완료되는 것만 신경쓴다.
+            .switchIfEmpty(doWhenEmpty); // 2. 두 경우 모두 빈 시퀀스다. 어떻게 둘을 구분할까?
+}
+```
+
+`processOrFallback` 메서드가 실제로 `doWhenEmpty` 경로를 통과했는지 확인하기 위해 약간의 보일러플레이트를 작성해야 한다. 즉, 다음과 같은 `Mono<Void>`가 필요하다:
+
+* 구독됐다는 사실을 포착한다.
+* 전체 프로세스가 종료된 *다음* 이 사실을 검증할 수 있게 한다. 
+
+3.1 버전 이전에는 수동으로 검증하고자 하는 상태마다 하나의 `AtomicBoolean`을 유지하고 평가하고자 하는 퍼블리셔에 `doOn*` 콜백을 추가했다. 이 패턴을 규칙적으로 적용하면 많은 보일러플레이트가 될 수 있다. 다행히도 3.1.0에서 `PublisherProbe`를 사용한 대안이 도입됐다. 다음 예시가 사용법을 보여준다:
+
+```java
+@Test
+public void testCommandEmptyPathIsUsed() {
+    PublisherProbe<Void> probe = PublisherProbe.empty(); // 1. 빈 시퀀스로 번역되는 프로브를 생성한다.
+
+    StepVerifier.create(processOrFallback(Mono.empty(), probe.mono())) // 2. `probe.mono()`를 호출해 `Mono<Void>` 위치에 프로브를 사용한다.
+                .verifyComplete();
+
+    probe.assertWasSubscribed(); // 3. 시퀀스가 끝난 뒤 프로브로 이것이 사용됐는지 검증한다. 구독됐는지 검증할 수 있다.
+    probe.assertWasRequested();  // 4. 뿐만 아니라 실제로 데이터가 요청됐는지와
+    probe.assertWasNotCancelled(); // 5. 취소됐는지도 검증한다.
+}
+```
+
+`.mono()` 대신  `.flux()`를 호출해 `Flux<T>` 위치에 프로브를 사용할 수도 있다. 프로브가 실행 경로에 필요할 뿐만 아니라 데이터도 방출해야 하는 경우 `PublisherProbe.of(Publisher)`로 `Publisher<T>`를 래핑할 수 있다.
+
